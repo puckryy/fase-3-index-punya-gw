@@ -1,0 +1,164 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║           MPL TOURNAMENT APP - INSTALLATION GUIDE                            ║
+║           Versi 2.0 | Security Hardened | Rebuild dari 0                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+⚠️  PENTING: XAMPP lu harus VERSI 3.3.0 atau LEBIH BARU!
+    Download: https://www.apachefriends.org/download.html
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 1: HAPUS DATABASE LAMA (WAJIB!)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Buka browser: http://localhost/phpmyadmin
+2. Klik database LAMA (database_turnamen, atau mpl_tournament lama)
+3. Klik tab "Operations" (di atas)
+4. Scroll ke bawah, klik "Drop the database (DROP)" → "OK"
+5. Klik "New" → Buat database baru: mpl_tournament → "Create"
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 2: EXTRACT PROJECT
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Extract file ZIP ini ke folder:
+   F:\PROJECT1\htdocs\tournament-app\
+
+   Struktur folder harus seperti ini:
+   F:\PROJECT1\htdocs\tournament-app\
+   ├── admin/
+   ├── api/
+   ├── assets/
+   ├── core/
+   ├── public/
+   ├── templates/
+   ├── user/
+   ├── .htaccess
+   └── database.sql
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 3: IMPORT DATABASE
+═══════════════════════════════════════════════════════════════════════════════
+
+CARA 1: Via phpMyAdmin (Mudah)
+-----------------------------
+1. Buka browser, ketik: http://localhost/phpmyadmin
+2. Klik database "mpl_tournament" (yang baru dibuat)
+3. Klik tab "Import"
+4. Klik "Choose File", pilih file: F:\PROJECT1\htdocs\tournament-app\database.sql
+5. Klik "Go" (tombol bawah)
+6. Tunggu sampai muncul "Import has been successfully finished"
+
+CARA 2: Via Command Line (Cepat)
+--------------------------------
+1. Buka Command Prompt (CMD) sebagai Administrator
+2. Ketik:
+   cd F:\PROJECT1\mysql\bin
+   mysql -u root -p mpl_tournament < F:\PROJECT1\htdocs\tournament-app\database.sql
+3. Kalau diminta password, langsung ENTER aja (default XAMPP kosong)
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 4: KONFIGURASI DATABASE
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Buka file: F:\PROJECT1\htdocs\tournament-app\core\config.php
+2. Cari bagian ini (line 30-35):
+
+   $host = 'localhost';
+   $db   = 'mpl_tournament';
+   $user = 'root';
+   $pass = '';  <-- BIARIN KOSONG KALAU XAMPP DEFAULT
+
+3. Password MySQL XAMPP default = KOSONG (gak perlu diisi)
+   Kalau lu gak pernah ganti password MySQL, biarin kosong.
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 5: AKTIFKAN MODUL APACHE (Cek dulu!)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Buka file: F:\PROJECT1\apache\conf\httpd.conf
+2. Cari baris ini, pastikan SUDAH gak ada # di depan:
+   LoadModule rewrite_module modules/mod_rewrite.so
+   LoadModule headers_module modules/mod_headers.so
+   LoadModule deflate_module modules/mod_deflate.so
+   LoadModule expires_module modules/mod_expires.so
+
+3. Kalau masih ada # di depan, hapus # nya
+4. Save file, restart Apache di XAMPP Control Panel (Stop lalu Start)
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 6: SETTING FOLDER UPLOADS
+═══════════════════════════════════════════════════════════════════════════════
+
+Buat folder ini kalau belum ada (klik kanan → New Folder):
+
+1. F:\PROJECT1\htdocs\tournament-app\assets\uploads\
+2. F:\PROJECT1\htdocs\tournament-app\assets\posters\
+3. F:\PROJECT1\htdocs\tournament-app\assets\avatars\poses\
+4. F:\PROJECT1\htdocs\tournament-app\assets\avatars\hair\
+5. F:\PROJECT1\htdocs\tournament-app\assets\avatars\jerseys\
+6. F:\PROJECT1\htdocs\tournament-app\logs\
+
+Klik kanan tiap folder → Properties → Security → Edit → Add → Everyone →
+Centang "Full Control" → Apply → OK
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 7: GANTI PASSWORD ADMIN DEFAULT
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  PENTING BANGET! Password default di database.sql harus diganti!
+
+1. Buka browser: http://localhost/tournament-app/admin/login.php
+2. Login dengan:
+   Username: admin
+   Password: AdminMPL2026!
+
+   ⚠️  KALAU GAK BISA LOGIN, password default belum di-set di SQL.
+   Cara fix:
+   - Buka phpMyAdmin → database mpl_tournament → tabel admin
+   - Klik "Edit" di row admin
+   - Ganti password_hash jadi:
+     $2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+     (ini hash dari "password")
+
+3. Setelah login, langsung ganti password di menu Settings!
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 8: TESTING
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Buka: http://localhost/tournament-app/ (halaman publik)
+2. Buka: http://localhost/tournament-app/admin/ (redirect ke login)
+3. Login admin, cek dashboard
+4. Coba tambah tim, player, jadwal
+
+═══════════════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ "#1050 - Table 'admin' already exists"
+→ Database lama belum dihapus! Hapus dulu database lama (Step 1)
+
+❌ "Access denied for user 'root'@'localhost'"
+→ Cek config.php, pastikan password MySQL bener
+
+❌ "404 Not Found"
+→ Cek mod_rewrite udah diaktifkan (Step 5)
+→ Cek folder project di htdocs bener
+
+❌ "500 Internal Server Error"
+→ Cek error log: F:\PROJECT1\apache\logs\error.log
+
+❌ "Upload failed"
+→ Cek folder uploads writable (Step 6)
+
+❌ "CSRF Token Invalid"
+→ Clear browser cache, refresh halaman
+
+═══════════════════════════════════════════════════════════════════════════════
+KONTAK & SUPPORT
+═══════════════════════════════════════════════════════════════════════════════
+
+Kalau ada masalah, screenshot error-nya dan kirim ke gw.
+Jangan utak-atik code tanpa izin gw, nanti security-nya bolong!
+
+🔥 SELAMAT MENGGUNAKAN MPL TOURNAMENT SYSTEM V2.0 🔥
